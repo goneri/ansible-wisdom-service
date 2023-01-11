@@ -16,7 +16,7 @@ jobs:
         id: build-torchserve-image
         uses: redhat-actions/buildah-build@v2.3
         with:
-          image: wisdom-torchserve
+          image: wisdom
           tags: unstable ${{ env.SHORT_SHA }}
           oci: true
           context: ./
@@ -26,7 +26,7 @@ jobs:
         id: build-server-image
         uses: redhat-actions/buildah-build@v2.3
         with:
-          image: wisdom-server
+          image: ansible_wisdom
           tags: unstable ${{ env.SHORT_SHA }}
           oci: true
           context: ./
@@ -34,7 +34,7 @@ jobs:
             ./ansible_wisdom.Containerfile
 
       - name: "Publish wisdom-torchserve Image to quay.io"
-        uses: redhat-actions/push-to-registry@v2.1.1
+        uses: redhat-actions/push-to-registry@v2.7
         with:
           image: ${{ steps.build-torchserve-image.outputs.image }}
           tags: ${{ steps.build-torchserve-image.outputs.tags }}
@@ -42,7 +42,7 @@ jobs:
           username: gleboude+github_action
           password: ${{ secrets.QUAY_PASSWORD }}
       - name: "Publish wisdom-torchserve Image to quay.io"
-        uses: redhat-actions/push-to-registry@v2.1.1
+        uses: redhat-actions/push-to-registry@v2.7
         with:
           image: ${{ steps.build-server-image.outputs.image }}
           tags: ${{ steps.build-server-image.outputs.tags }}
