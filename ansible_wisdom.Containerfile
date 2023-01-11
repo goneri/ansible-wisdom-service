@@ -1,7 +1,8 @@
 FROM registry.access.redhat.com/ubi9/ubi:9.1.0-1646.1669627755
 
 ARG DJANGO_SETTINGS_MODULE=main.settings.development
-
+ARG ANSIBLE_AI_MODEL_MESH_HOST=http://localhost
+ARG ANSIBLE_AI_MODEL_MESH_INFERENCE_PORT=7080
 RUN dnf install -y python39 python3-pip
 
 COPY ansible_wisdom /opt/ansible_wisdom

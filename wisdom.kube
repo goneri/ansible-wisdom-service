@@ -1,0 +1,82 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-4.2.0
+
+# NOTE: If you generated this yaml from an unprivileged and rootless podman container on an SELinux
+# enabled system, check the podman generate kube man page for steps to follow to ensure that your pod/container
+# has the right permissions to access the volumes added.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    io.kubernetes.cri-o.TTY/ansible-wisdom: "true"
+    io.kubernetes.cri-o.TTY/wisdom: "true"
+    io.podman.annotations.autoremove/ansible-wisdom: "TRUE"
+    io.podman.annotations.autoremove/wisdom: "TRUE"
+    io.podman.annotations.init/ansible-wisdom: "FALSE"
+    io.podman.annotations.init/wisdom: "FALSE"
+    io.podman.annotations.privileged/ansible-wisdom: "FALSE"
+    io.podman.annotations.privileged/wisdom: "FALSE"
+    io.podman.annotations.publish-all/ansible-wisdom: "FALSE"
+    io.podman.annotations.publish-all/wisdom: "FALSE"
+    org.opencontainers.image.base.digest/ansible-wisdom: sha256:10fd5f1f64d9529a5954797298c26a6731a590c8d829bc450b702baf
+    org.opencontainers.image.base.digest/wisdom: sha256:8b2f13d2f408a1fce33da1c69cb3b45405eaa4b65a7137dccc4835f1
+    org.opencontainers.image.base.name/ansible-wisdom: registry.access.redhat.com/ubi9/ubi:9.1.0-1646.1669627755
+    org.opencontainers.image.base.name/wisdom: docker.io/pytorch/torchserve-nightly:latest-gpu
+  creationTimestamp: "2023-01-10T22:52:59Z"
+  labels:
+    app: ansible-wisdom-pod
+  name: ansible-wisdom-pod
+spec:
+  containers:
+  - env:
+    - name: ANSIBLE_AI_MODEL_MESH_HOST
+      value: http://localhost
+    - name: ANSIBLE_AI_MODEL_MESH_INFERENCE_PORT
+      value: "7080"
+    image: quay.io/gleboude/ansible_wisdom:latest
+    name: ansible-wisdom
+    ports:
+    - containerPort: 8000
+      hostPort: 8000
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_AUDIT_WRITE
+    stdin: true
+    tty: true
+  - args:
+    - torchserve
+    - --start
+    - --ts-config=/home/model-server/config.properties
+    - --models=wisdom=wisdom.mar
+    - --model-store=/home/model-server/model-store
+    image: quay.io/gleboude/wisdom:latest
+    name: wisdom
+    ports:
+    - containerPort: 7080
+      hostPort: 7080
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_AUDIT_WRITE
+      seLinuxOptions:
+        # This is the equivalant of --security-opt=label=disable, we need this
+        # to be able to open the wisdom.mar file.
+        # note: chcon -t container_file_t -R wisdom.mar  doesn't resolve the
+        # problem.
+        type: spc_t
+    stdin: true
+    tty: true
+    volumeMounts:
+    - mountPath: /home/model-server/model-store/wisdom.mar
+      name: home-ec2-user-wisdom.mar-host-0
+  volumes:
+  - hostPath:
+      path: /home/ec2-user/wisdom.mar
+      type: File
+    name: home-ec2-user-wisdom.mar-host-0
