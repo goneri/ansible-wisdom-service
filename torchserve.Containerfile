@@ -33,4 +33,5 @@ FROM base as production
 
 ARG MODEL_PATH=./model/wisdom
 
-COPY --chown=1000:0 ${MODEL_PATH}/wisdom.mar /home/model-server/model-store
+# Disabled until we've got a better way to collect the file than just a Google Drive.
+#COPY --chown=1000:0 ${MODEL_PATH}/wisdom.mar /home/model-server/model-store
