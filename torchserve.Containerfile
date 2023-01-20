@@ -17,6 +17,8 @@ EXPOSE 7081
 
 USER 1000
 
+RUN /usr/local/bin/pip3 install git+https://github.com/goneri/anonymizor
+
 # run Torchserve HTTP server to respond to prediction requests
 ENV TRANSFORMERS_CACHE=~/.cache
 CMD ["torchserve", \

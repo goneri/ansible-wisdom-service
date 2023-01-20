@@ -127,7 +127,10 @@ class TransformersClassifierHandler(BaseHandler):
         return result
 
     def postprocess(self, inference_output):
-        return inference_output
+        logger.info(inference_output)
+        anonymized = anonymizor.anonymize(inference_output)
+        logger.info(anonymized)
+        return anonymized
 
     def handle(self, data, context):
         """
