@@ -1,0 +1,18 @@
+- hosts: localhost
+  tasks:
+    - name: start an instance with a public IP address
+      amazon.aws.ec2_instance:
+        name: "public-compute-instance"
+        key_name: my-ssh-key
+        vpc_subnet_id: subnet-5ca1ab1e
+        instance_type: c5.large
+        security_group: default
+        image_id: ami-123456
+        tower_callback:
+          # IP or hostname of tower server
+          tower_address: 1.2.3.4
+          job_template_id: 876
+          host_config_key: 'some-secret-I-need-to-hide'
+        tags:
+          Environment: Testing
+          Contact: "contact@somewhere.at.redhat.com"
