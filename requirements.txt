@@ -26,3 +26,6 @@ uwsgi-readiness-check==0.2.0
 segment-analytics-python==2.2.2
 pytz
 django-health-check==3.17.0
+
+# https://github.com/advisories/GHSA-r9hx-vwmv-q579
+setuptools>=65.5.1
