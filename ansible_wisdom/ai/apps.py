@@ -1,6 +1,7 @@
 import logging
 
 import torch
+from ansible_lint import lintpostprocessing
 from ansible_risk_insight.scanner import Config
 from django.apps import AppConfig
 from django.conf import settings
@@ -12,12 +13,10 @@ from users.authz_checker import (
 )
 
 from ari import postprocessing
+
 from ansible_lint import lintpostprocessing
-<<<<<<< HEAD
 
 from .api.aws.wca_secret_manager import WcaSecretManager
-=======
->>>>>>> 426fe0c (update post process order)
 
 logger = logging.getLogger(__name__)
 
@@ -94,26 +93,6 @@ class AiConfig(AppConfig):
             self._ari_caller = FAILED
         return self._ari_caller
 
-<<<<<<< HEAD
-=======
-    def get_ansible_lint_caller(self):
-        if not settings.ENABLE_ANSIBLE_LINT_POSTPROCESS:
-            logger.info("Ansible Lint Postprocessing is disabled.")
-            self._ansible_lint_caller = UNINITIALIZED
-            return None
-        if self._ansible_lint_caller is FAILED:
-            return None
-        if self._ansible_lint_caller:
-            return self._ansible_lint_caller
-        try:
-            self._ansible_lint_caller = lintpostprocessing.AnsibleLintCaller()
-            logger.info("Ansible Lint Postprocessing is enabled.")
-        except Exception as ex:
-            logger.exception(f"Failed to initialize Ansible Lint with exception: {ex}")
-            self._ansible_lint_caller = FAILED
-        return self._ansible_lint_caller
-
->>>>>>> 426fe0c (update post process order)
     def get_seat_checker(self):
         backends = {
             "ams": AMSCheck,
