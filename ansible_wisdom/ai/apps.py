@@ -14,8 +14,6 @@ from users.authz_checker import (
 
 from ari import postprocessing
 
-from ansible_lint import lintpostprocessing
-
 from .api.aws.wca_secret_manager import WcaSecretManager
 
 logger = logging.getLogger(__name__)
