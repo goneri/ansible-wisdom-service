@@ -376,6 +376,7 @@ class Completions(APIView):
                         postprocess_detail.get("rule_results", {}),
                         exception,
                         start_time,
+                        "AnsibleRiskInsight_Postprocess",
                     )
                     if exception:
                         raise exception
@@ -386,7 +387,8 @@ class Completions(APIView):
                     # Post-processing by running Ansible Lint to model server predictions
                     postprocessed_yaml = ansible_lint_caller.run_linter(recommendation_yaml)
                     # Stripping the linting transform and adding --- in the linted yaml
-                    recommendation["predictions"][i] = postprocessed_yaml.strip(STRIP_YAML_LINE)
+                    postprocessed_yaml = postprocessed_yaml.strip(STRIP_YAML_LINE)
+                    recommendation["predictions"][i] = postprocessed_yaml
                 except Exception as exc:
                     exception = exc
                     # return the original recommendation if we failed to postprocess
@@ -400,10 +402,11 @@ class Completions(APIView):
                         suggestion_id,
                         recommendation_yaml,
                         None,
-                        postprocessed_yaml.strip(STRIP_YAML_LINE),
+                        postprocessed_yaml,
                         None,
                         exception,
                         start_time,
+                        "AnsibleLint_Postprocess",
                     )
                     if exception:
                         raise exception
@@ -430,6 +433,7 @@ class Completions(APIView):
         postprocess_detail,
         exception,
         start_time,
+        processing_tool,
     ):
         duration = round((time.time() - start_time) * 1000, 2)
         problem = (
@@ -448,6 +452,7 @@ class Completions(APIView):
             "postprocessed": postprocessed_yaml,
             "detail": postprocess_detail,
             "suggestionId": str(suggestion_id) if suggestion_id else None,
+            "processingTool": processing_tool,
         }
         send_segment_event(event, "postprocess", user)
 
